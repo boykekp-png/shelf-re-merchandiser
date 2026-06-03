@@ -221,19 +221,28 @@ export default function HomePageClient() {
       }
     }
 
-    // If the requested position is not valid or not free, find the first available slot starting from the requested position
+    // If the requested position is not valid or not free, search left then right for closest available slot
     if (finalGridPosition === -1) {
-      for (let i = toPosition; i <= 12 - productWidth; i++) { // Start search from toPosition
-        let canFit = true;
-        for (let j = i; j < i + productWidth; j++) {
-          if (occupied[j]) {
-            canFit = false;
-            break;
+      let found = false;
+      const maxOffset = Math.max(toPosition, 12 - productWidth - toPosition);
+      for (let offset = 0; offset <= maxOffset; offset++) {
+        // Try leftwards first (close the gap)
+        const leftPos = toPosition - offset;
+        if (leftPos >= 0) {
+          let canFit = true;
+          for (let j = leftPos; j < leftPos + productWidth; j++) {
+            if (occupied[j]) { canFit = false; break; }
           }
+          if (canFit) { finalGridPosition = leftPos; found = true; break; }
         }
-        if (canFit) {
-          finalGridPosition = i;
-          break;
+        // Then try rightwards
+        const rightPos = toPosition + offset;
+        if (rightPos <= 12 - productWidth && !found) {
+          let canFit = true;
+          for (let j = rightPos; j < rightPos + productWidth; j++) {
+            if (occupied[j]) { canFit = false; break; }
+          }
+          if (canFit) { finalGridPosition = rightPos; found = true; break; }
         }
       }
     }

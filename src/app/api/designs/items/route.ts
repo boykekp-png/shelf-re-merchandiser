@@ -11,12 +11,31 @@ export async function POST(request: Request) {
     const { shelfId, productId, gridPosition, occupiedWidth, quantity } = await request.json();
     if (!shelfId || !productId) return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
 
+    const pos = gridPosition || 0;
+    const width = occupiedWidth || 3;
+
+    // Check for overlapping items on the same shelf
+    const existingItems = await prisma.designItem.findMany({
+      where: { designShelfId: shelfId },
+      select: { id: true, gridPosition: true, occupiedWidth: true },
+    });
+
+    const hasOverlap = existingItems.some((item) => {
+      const itemEnd = item.gridPosition + item.occupiedWidth;
+      const newEnd = pos + width;
+      return pos < itemEnd && newEnd > item.gridPosition;
+    });
+
+    if (hasOverlap) {
+      return NextResponse.json({ error: 'Position conflicts with an existing item' }, { status: 409 });
+    }
+
     const item = await prisma.designItem.create({
       data: {
         designShelfId: shelfId,
         productId,
-        gridPosition: gridPosition || 0,
-        occupiedWidth: occupiedWidth || 3,
+        gridPosition: pos,
+        occupiedWidth: width,
         quantity: quantity || 1,
       },
       include: { product: { include: { category: true } } },

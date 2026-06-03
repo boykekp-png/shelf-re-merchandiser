@@ -29,14 +29,13 @@ export default function Shelf({
   const [nameInput, setNameInput] = useState(shelf.name);
   const gridRef = useRef<HTMLDivElement>(null); // Ref for the grid container
 
-  // Calculate occupied grid positions for empty slot display
+  // Calculate occupied grid positions and build ordered item list
   const occupiedPositions = new Array(12).fill(false);
-  const itemPositions: Record<number, DesignItemWithProduct> = {};
-  for (const item of shelf.items) {
+  const sortedItems = [...shelf.items].sort((a, b) => a.gridPosition - b.gridPosition);
+  for (const item of sortedItems) {
     for (let i = item.gridPosition; i < item.gridPosition + item.occupiedWidth; i++) {
       if (i < 12) occupiedPositions[i] = true;
     }
-    itemPositions[item.gridPosition] = item;
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -152,15 +151,32 @@ export default function Shelf({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {/* Render item placeholders and empty slots */}
-        {Array.from({ length: 12 }, (_, col) => {
-          const item = itemPositions[col];
-          if (item) {
-            return (
+        {/* Render items and empty slots, building a proper 12-column grid */}
+        {(() => {
+          const cells: React.ReactNode[] = [];
+          let cursor = 0;
+
+          for (const item of sortedItems) {
+            // Render empty slots before this item
+            for (let i = cursor; i < item.gridPosition; i++) {
+              if (!occupiedPositions[i]) {
+                cells.push(
+                  <div
+                    key={`empty-${i}`}
+                    className="grid-col-1 min-h-[4rem] border border-dashed border-gray-100 rounded-lg flex items-center justify-center"
+                    style={{ gridColumn: `${i + 1}` }}
+                  >
+                    <span className="text-xs text-gray-300">slot {i + 1}</span>
+                  </div>
+                );
+              }
+            }
+            // Render the item
+            cells.push(
               <div
                 key={item.id}
                 className={`grid-col-${item.occupiedWidth} h-full`}
-                style={{ gridColumn: `${col + 1} / span ${item.occupiedWidth}` }}
+                style={{ gridColumn: `${item.gridPosition + 1} / span ${item.occupiedWidth}` }}
               >
                 <ProductCard
                   item={item}
@@ -175,19 +191,26 @@ export default function Shelf({
                 />
               </div>
             );
-          } else if (!occupiedPositions[col]) {
-            return (
-              <div
-                key={`empty-${col}`}
-                className="grid-col-1 min-h-[4rem] border border-dashed border-gray-100 rounded-lg flex items-center justify-center"
-              >
-                <span className="text-xs text-gray-300">slot {col + 1}</span>
-              </div>
-            );
-          } else {
-            return null;
+            cursor = item.gridPosition + item.occupiedWidth;
           }
-        })}
+
+          // Render remaining empty slots after the last item
+          for (let i = cursor; i < 12; i++) {
+            if (!occupiedPositions[i]) {
+              cells.push(
+                <div
+                  key={`empty-${i}`}
+                  className="grid-col-1 min-h-[4rem] border border-dashed border-gray-100 rounded-lg flex items-center justify-center"
+                  style={{ gridColumn: `${i + 1}` }}
+                >
+                  <span className="text-xs text-gray-300">slot {i + 1}</span>
+                </div>
+              );
+            }
+          }
+
+          return cells;
+        })()}
       </div>
     </div>
   );
