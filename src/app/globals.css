@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  /* Shelf grid */
+  .shelf-grid {
+    @apply grid grid-cols-12 gap-2 p-3 min-h-[5rem] rounded-lg border-2 border-dashed border-gray-200 transition-colors;
+  }
+
+  .shelf-grid.drag-over {
+    @apply border-blue-400 bg-blue-50/50;
+  }
+
+  /* Product card */
+  .product-card {
+    @apply relative flex flex-col items-center justify-center h-full rounded-2xl border-2 p-3 transition-all duration-200 cursor-grab select-none;
+  }
+
+  .product-card:hover {
+    @apply shadow-lg scale-[1.03] border-gray-300;
+  }
+
+  .product-card:active {
+    @apply cursor-grabbing scale-[0.98];
+  }
+
+  .product-card.selected {
+    @apply border-orange-500 bg-orange-50 shadow-[0_0_0_3px_rgba(245,124,0,0.3)];
+  }
+
+  .product-card.dragging {
+    @apply opacity-50 scale-95;
+  }
+
+  .product-card.disabled {
+    @apply opacity-60 border-dashed border-gray-400;
+  }
+
+  /* Category badge */
+  .category-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* Shelf header */
+  .shelf-header {
+    @apply flex items-center justify-between px-1 py-2;
+  }
+
+  .shelf-title {
+    @apply text-lg font-semibold text-gray-800;
+  }
+
+  /* Toolbar */
+  .toolbar-btn {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .toolbar-btn.primary {
+    @apply bg-blue-600 text-white border-blue-600 hover:bg-blue-700;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 max-h-[85vh] overflow-y-auto animate-bounce-in;
+  }
+
+  /* Print styles */
+  @media print {
+    body {
+      @apply bg-white;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+
+    .shelf-grid {
+      @apply border-gray-300 bg-white;
+    }
+
+    .product-card {
+      @apply shadow-none border-gray-300;
+    }
+  }
+}
+
+@layer utilities {
+  .grid-col-1 { grid-column: span 1 / span 1; }
+  .grid-col-2 { grid-column: span 2 / span 2; }
+  .grid-col-3 { grid-column: span 3 / span 3; }
+}

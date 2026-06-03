@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users & Authentication ──
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          String    @default("user") // "admin" | "user"
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  designs       SavedDesign[]
+  activeDesign  ActiveDesign?
+
+  @@map("users")
+}
+
+// ─── Categories ───
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  icon      String    @default("📦")
+  color     String    @default("#9E9E9E")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  products  Product[]
+
+  @@map("categories")
+}
+
+// ─── Products (Catalog) ───
+model Product {
+  id            String    @id @default(cuid())
+  name          String
+  imagePath     String?
+  defaultWidth  Int       @default(3) // 1, 2, or 3 grid cells
+  isActive      Boolean   @default(true) // soft-delete: enable/disable
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  designItems   DesignItem[]
+
+  @@map("products")
+}
+
+// ─── Saved Designs ──
+model SavedDesign {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  isTemplate  Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  shelves     DesignShelf[]
+  activeFor   ActiveDesign?
+
+  @@map("saved_designs")
+}
+
+// ─── Design Shelves ───
+model DesignShelf {
+  id        String    @id @default(cuid())
+  name      String
+  position  Int       @default(0) // ordering index
+  createdAt  DateTime  @default(now())
+
+  designId  String
+  design    SavedDesign  @relation(fields: [designId], references: [id], onDelete: Cascade)
+
+  items     DesignItem[]
+
+  @@map("design_shelves")
+}
+
+// ─── Design Items (Products placed on shelves) ──
+model DesignItem {
+  id             String    @id @default(cuid())
+  gridPosition   Int       // 0-11 (column index within the 12-grid)
+  occupiedWidth  Int       @default(3) // 1, 2, or 3
+  quantity        Int       @default(1)
+  createdAt       DateTime  @default(now())
+
+  designShelfId  String
+  designShelf    DesignShelf  @relation(fields: [designShelfId], references: [id], onDelete: Cascade)
+
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("design_items")
+}
+
+// ─── Active Design Tracker ───
+model ActiveDesign {
+  id        String  @id @default(cuid())
+
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  designId  String  @unique
+  design    SavedDesign  @relation(fields: [designId], references: [id], onDelete: Cascade)
+
+  @@map("active_designs")
+}
