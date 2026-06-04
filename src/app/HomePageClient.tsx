@@ -15,6 +15,28 @@ import LoadDesignModal from '@/components/design/LoadDesignModal';
 import PrintModal from '@/components/design/PrintModal';
 import toast from 'react-hot-toast';
 
+// Play a funny error sound using Web Audio API
+function playWompWomp() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(80, ctx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+  } catch { /* Audio not available */ }
+}
+
+function isPositionOccupied(items: Array<{ gridPosition: number }>, position: number, excludeItemId?: string): boolean {
+  return items.some((item: any) => item.gridPosition === position && item.id !== excludeItemId);
+}
+
 export default function HomePageClient() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -86,6 +108,13 @@ export default function HomePageClient() {
   const addProductToShelf = useCallback(async (shelfId: string, productId: string, gridPosition: number) => {
     if (!design) return;
     const pos = Math.max(0, gridPosition);
+    // Check for overlap on the target shelf
+    const targetShelf = design.shelves.find((s: any) => s.id === shelfId);
+    if (targetShelf && isPositionOccupied(targetShelf.items, pos)) {
+      playWompWomp();
+      toast.error('🚫 Spot taken! Pick another slot.', { icon: '💥' });
+      return;
+    }
     try {
       const res = await fetch('/api/designs/items', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -110,6 +139,13 @@ export default function HomePageClient() {
   const moveItem = useCallback(async (itemId: string, toShelfId: string, toPosition: number) => {
     if (!design) return;
     const pos = Math.max(0, toPosition);
+    // Check for overlap on the target shelf (exclude self)
+    const targetShelf = design.shelves.find((s: any) => s.id === toShelfId);
+    if (targetShelf && isPositionOccupied(targetShelf.items, pos, itemId)) {
+      playWompWomp();
+      toast.error('🚫 Spot taken! Move elsewhere.', { icon: '💥' });
+      return;
+    }
     try {
       const res = await fetch(`/api/designs/items/${itemId}/move`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
