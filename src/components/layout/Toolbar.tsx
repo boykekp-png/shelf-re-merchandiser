@@ -1,3 +1,13 @@
+/**
+ * EN: Toolbar — Main action bar with save, load, print, cut/paste, add, and admin controls.
+ *     Contains all design manipulation buttons with icon + text labels (icons only on mobile).
+ *     Admin users get a user-switcher dropdown to view other users' designs.
+ *
+ * ID: Toolbar — Bilah aksi utama dengan kontrol simpan, muat, cetak, potong/tempel, tambah, dan admin.
+ *     Berisi semua tombol manipulasi desain dengan label ikon + teks (hanya ikon di mobile).
+ *     Pengguna admin mendapat dropdown pengalih pengguna untuk melihat desain pengguna lain.
+ */
+
 'use client';
 
 import { Save, FolderOpen, FilePlus, Printer, Scissors, Clipboard, Plus, Package, Users } from 'lucide-react';
@@ -29,12 +39,12 @@ export default function Toolbar({
 }: ToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-2 mb-6 no-print">
-      {/* Design name */}
+      {/* EN: Current design name / ID: Nama desain saat ini */}
       <span className="text-sm font-semibold text-gray-700 mr-2 truncate max-w-[200px]">
         📋 {designName}
       </span>
 
-      {/* Save/Load */}
+      {/* ─── Save/Load group / Grup Simpan/Muat ─── */}
       <button onClick={onSave} className="toolbar-btn" title="Save (Ctrl+S)">
         <Save className="w-4 h-4" />
         <span className="hidden sm:inline">Save</span>
@@ -50,7 +60,7 @@ export default function Toolbar({
 
       <div className="w-px h-6 bg-gray-300 mx-1" />
 
-      {/* Edit */}
+      {/* ─── Edit group / Grup Edit ─── */}
       <button onClick={onCut} disabled={!selectedItemId} className="toolbar-btn" title="Cut (Ctrl+X)">
         <Scissors className="w-4 h-4" />
         <span className="hidden sm:inline">Cut</span>
@@ -62,7 +72,7 @@ export default function Toolbar({
 
       <div className="w-px h-6 bg-gray-300 mx-1" />
 
-      {/* Add */}
+      {/* ─── Add group / Grup Tambah ─── */}
       <button onClick={onAddProduct} className="toolbar-btn primary" title="Add Product">
         <Package className="w-4 h-4" />
         <span className="hidden sm:inline">Add Product</span>
@@ -74,13 +84,13 @@ export default function Toolbar({
 
       <div className="w-px h-6 bg-gray-300 mx-1" />
 
-      {/* Print */}
+      {/* ─── Print / Cetak ─── */}
       <button onClick={onPrint} className="toolbar-btn" title="Print / PDF">
         <Printer className="w-4 h-4" />
         <span className="hidden sm:inline">Print</span>
       </button>
 
-      {/* Admin: View as user */}
+      {/* ─── Admin: View as user dropdown / Admin: Dropdown lihat sebagai pengguna ─── */}
       {isAdmin && users.length > 0 && (
         <>
           <div className="w-px h-6 bg-gray-300 mx-1" />

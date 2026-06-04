@@ -1,3 +1,13 @@
+/**
+ * EN: ShelfContainer — Renders all shelves in a design vertically.
+ *     A layout wrapper that maps over DesignWithShelves and passes
+ *     drag/drop, selection, and CRUD handlers to each Shelf.
+ *
+ * ID: ShelfContainer — Merender semua rak dalam desain secara vertikal.
+ *     Pembungkus layout yang memetakan DesignWithShelves dan meneruskan
+ *     handler drag/drop, seleksi, dan CRUD ke setiap Shelf.
+ */
+
 'use client';
 
 import type { DesignWithShelves, DesignItemWithProduct } from '@/types';
@@ -12,9 +22,9 @@ interface ShelfContainerProps {
   onEditItem: (item: DesignItemWithProduct) => void;
   onDeleteShelf: (shelfId: string) => void;
   onRenameShelf: (shelfId: string, newName: string) => void;
-  // Added toPosition parameter
+  // EN: toPosition added for column-level drop precision / ID: toPosition ditambahkan untuk presisi drop level kolom
   onDropOnShelf: (itemId: string, shelfId: string, toPosition: number) => void;
-  // Added toPosition parameter
+  // EN: toPosition added for column-level drop precision / ID: toPosition ditambahkan untuk presisi drop level kolom
   onDropNewProduct: (productId: string, defaultWidth: number, shelfId: string, toPosition: number) => void;
 }
 

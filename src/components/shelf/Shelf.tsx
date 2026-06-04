@@ -1,3 +1,23 @@
+/**
+ * EN: Shelf — A single 12-column grid shelf row.
+ *     Renders sorted items in their grid positions, with empty slot placeholders.
+ *     Handles:
+ *       - Drag/drop from ProductTray (new products via JSON dataTransfer)
+ *       - Drag/drop between shelves (existing items via text/plain)
+ *       - Column-level drop calculation using getBoundingClientRect
+ *       - Click to select, double-click to edit, inline rename
+ *       - Delete with confirmation
+ *
+ * ID: Shelf — Satu baris rak grid 12 kolom.
+ *     Merender item yang diurutkan di posisi gridnya, dengan placeholder slot kosong.
+ *     Menangani:
+ *       - Drag/drop dari ProductTray (produk baru via JSON dataTransfer)
+ *       - Drag/drop antar rak (item existing via text/plain)
+ *       - Kalkulasi drop level kolom menggunakan getBoundingClientRect
+ *       - Klik untuk pilih, double-klik untuk edit, rename inline
+ *       - Hapus dengan konfirmasi
+ */
+
 'use client';
 
 import { useState, useRef } from 'react';
@@ -14,9 +34,9 @@ interface ShelfProps {
   onEditItem: (item: DesignItemWithProduct) => void;
   onDeleteShelf: (shelfId: string) => void;
   onRenameShelf: (shelfId: string, newName: string) => void;
-  // Added toPosition parameter
+  // EN: toPosition added for column-level precision / ID: toPosition ditambahkan untuk presisi level kolom
   onDropOnShelf: (itemId: string, shelfId: string, toPosition: number) => void;
-  // Added toPosition parameter
+  // EN: toPosition added for column-level precision / ID: toPosition ditambahkan untuk presisi level kolom
   onDropNewProduct: (productId: string, defaultWidth: number, shelfId: string, toPosition: number) => void;
 }
 
@@ -27,8 +47,10 @@ export default function Shelf({
   const [isDragOver, setIsDragOver] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(shelf.name);
-  const gridRef = useRef<HTMLDivElement>(null); // Ref for the grid container
+  // EN: Ref for precise column calculation / ID: Ref untuk kalkulasi kolom presisi
+  const gridRef = useRef<HTMLDivElement>(null);
 
+  // EN: Sort items left-to-right by grid position / ID: Urutkan item kiri-ke-kanan berdasarkan posisi grid
   const sortedItems = [...shelf.items].sort((a, b) => a.gridPosition - b.gridPosition);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -46,11 +68,13 @@ export default function Shelf({
 
     if (!gridRef.current) return;
 
+    // EN: Calculate target column from mouse X position relative to grid width
+    // ID: Hitung kolom target dari posisi X mouse relatif terhadap lebar grid
     const gridRect = gridRef.current.getBoundingClientRect();
     const dropX = e.clientX - gridRect.left;
     const targetColumn = Math.max(0, Math.min(Math.floor((dropX / gridRect.width) * 12), 11));
 
-    // Try JSON format (new products from tray)
+    // EN: Try JSON format (new products from ProductTray) / ID: Coba format JSON (produk baru dari ProductTray)
     const jsonData = e.dataTransfer.getData('application/json');
     if (jsonData) {
       try {
@@ -59,10 +83,10 @@ export default function Shelf({
           onDropNewProduct(parsed.productId, parsed.defaultWidth || 3, shelf.id, targetColumn);
           return;
         }
-      } catch { /* not JSON */ }
+      } catch { /* EN: Not valid JSON / ID: Bukan JSON yang valid */ }
     }
 
-    // Fallback: plain text (existing item move)
+    // EN: Fallback: plain text (existing item being moved) / ID: Fallback: teks biasa (item existing yang dipindahkan)
     const itemId = e.dataTransfer.getData('text/plain');
     if (itemId) {
       onDropOnShelf(itemId, shelf.id, targetColumn);
@@ -73,14 +97,14 @@ export default function Shelf({
     if (nameInput.trim() && nameInput !== shelf.name) {
       onRenameShelf(shelf.id, nameInput.trim());
     } else {
-      setNameInput(shelf.name);
+      setNameInput(shelf.name); // EN: Reset if empty or unchanged / ID: Reset jika kosong atau tidak berubah
     }
     setEditingName(false);
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-      {/* Shelf Header */}
+      {/* EN: Shelf Header / ID: Kepala Rak */}
       <div className="shelf-header bg-gray-50/50 px-4 py-3 border-b border-gray-100 no-print">
         <div className="flex items-center gap-3">
           {editingName ? (
@@ -101,6 +125,7 @@ export default function Shelf({
               {shelf.name}
             </h3>
           )}
+          {/* EN: Slot usage indicator / ID: Indikator penggunaan slot */}
           <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
             {shelf.items.length} items · {12 - shelf.items.length} slots free
           </span>
@@ -128,7 +153,7 @@ export default function Shelf({
         </div>
       </div>
 
-      {/* Shelf Grid */}
+      {/* EN: Shelf Grid / ID: Grid Rak */}
       <div
         ref={gridRef}
         className={`shelf-grid ${isDragOver ? 'drag-over' : ''}`}
@@ -136,13 +161,13 @@ export default function Shelf({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {/* Render items and empty slots, building a proper 12-column grid */}
+        {/* EN: Build a proper 12-column grid with items at their positions + empty slots / ID: Bangun grid 12-kolom dengan item di posisinya + slot kosong */}
         {(() => {
           const cells: React.ReactNode[] = [];
-          let cursor = 0;
+          let cursor = 0; // EN: Track current column position / ID: Lacak posisi kolom saat ini
 
           for (const item of sortedItems) {
-            // Render empty slots before this item
+            // EN: Render empty slots before this item / ID: Render slot kosong sebelum item ini
             for (let i = cursor; i < item.gridPosition; i++) {
               cells.push(
                 <div
@@ -154,7 +179,7 @@ export default function Shelf({
                 </div>
               );
             }
-            // Render the item (always width 1)
+            // EN: Render the item (always width 1) at its column / ID: Render item (selalu lebar 1) di kolomnya
             cells.push(
               <div
                 key={item.id}
@@ -168,16 +193,17 @@ export default function Shelf({
                   onRemove={() => onRemoveItem(item.id)}
                   onEdit={() => onEditItem(item)}
                   onDragStart={(e) => {
+                    // EN: Set item ID for drag/drop within/between shelves / ID: Set item ID untuk drag/drop di dalam/antar rak
                     e.dataTransfer.setData('text/plain', item.id);
                     e.dataTransfer.effectAllowed = 'move';
                   }}
                 />
               </div>
             );
-            cursor = item.gridPosition + 1;
+            cursor = item.gridPosition + 1; // EN: Column after this item / ID: Kolom setelah item ini
           }
 
-          // Render remaining empty slots after the last item
+          // EN: Render remaining empty slots after the last item / ID: Render slot kosong sisa setelah item terakhir
           for (let i = cursor; i < 12; i++) {
             cells.push(
               <div

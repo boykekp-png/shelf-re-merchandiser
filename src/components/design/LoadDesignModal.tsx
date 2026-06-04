@@ -1,3 +1,13 @@
+/**
+ * EN: LoadDesignModal — Dialog to browse and load previously saved designs.
+ *     Fetches designs from /api/designs, shows shelf count and last-modified date.
+ *     Click to load (activate) a design, with delete button per design.
+ *
+ * ID: LoadDesignModal — Dialog untuk menelusuri dan memuat desain yang tersimpan.
+ *     Mengambil desain dari /api/designs, menampilkan jumlah rak dan tanggal modifikasi terakhir.
+ *     Klik untuk memuat (mengaktifkan) desain, dengan tombol hapus per desain.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -13,6 +23,7 @@ export default function LoadDesignModal({ onLoad, onDelete, onClose }: LoadDesig
   const [designs, setDesigns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // EN: Fetch saved designs on mount / ID: Ambil desain tersimpan saat mount
   useEffect(() => {
     loadDesigns();
   }, []);
@@ -29,6 +40,7 @@ export default function LoadDesignModal({ onLoad, onDelete, onClose }: LoadDesig
     }
   };
 
+  // EN: Delete and remove from local list / ID: Hapus dan hapus dari daftar lokal
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('Delete this design permanently?')) {
@@ -63,9 +75,11 @@ export default function LoadDesignModal({ onLoad, onDelete, onClose }: LoadDesig
                     <div>
                       <p className="font-medium text-sm">{design.name}</p>
                       <p className="text-xs text-gray-500">
+                        {/* EN: Shelf count + optional description / ID: Jumlah rak + deskripsi opsional */}
                         {design._count?.shelves || 0} shelves
                         {design.description && ` · ${design.description}`}
                       </p>
+                      {/* EN: Last modified date / ID: Tanggal modifikasi terakhir */}
                       <p className="text-xs text-gray-400">
                         {new Date(design.updatedAt).toLocaleDateString()}
                       </p>

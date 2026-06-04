@@ -1,3 +1,13 @@
+/**
+ * EN: ProductEditModal — Double-click/Edit modal for a shelf item.
+ *     Allows editing the quantity of a placed product.
+ *     Shows product name and category as read-only info.
+ *
+ * ID: ProductEditModal — Modal double-klik/Edit untuk item rak.
+ *     Memungkinkan mengedit jumlah produk yang sudah ditempatkan.
+ *     Menampilkan nama produk dan kategori sebagai info read-only.
+ */
+
 'use client';
 
 import { useState } from 'react';
@@ -23,6 +33,7 @@ export default function ProductEditModal({ item, onSave, onClose }: ProductEditM
           </button>
         </div>
         <div className="space-y-4">
+          {/* EN: Read-only product info / ID: Info produk read-only */}
           <div>
             <p className="text-sm text-gray-500 mb-1">Product</p>
             <p className="font-medium">{item.product.name}</p>
@@ -31,6 +42,7 @@ export default function ProductEditModal({ item, onSave, onClose }: ProductEditM
             <p className="text-sm text-gray-500 mb-1">Category</p>
             <p className="font-medium">{item.product.category.icon} {item.product.category.name}</p>
           </div>
+          {/* EN: Editable quantity (1-99 range) / ID: Jumlah yang dapat diedit (rentang 1-99) */}
           <div>
             <label className="text-sm text-gray-500 mb-1 block">Quantity</label>
             <input

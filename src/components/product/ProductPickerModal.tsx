@@ -1,3 +1,15 @@
+/**
+ * EN: ProductPickerModal — Searchable product picker dialog.
+ *     Fetches active products, supports name search filtering,
+ *     and calls onSelect when a product is clicked.
+ *     Shows emoji, name, and category for each product.
+ *
+ * ID: ProductPickerModal — Dialog pemilih produk yang dapat dicari.
+ *     Mengambil produk aktif, mendukung pencarian berdasarkan nama,
+ *     dan memanggil onSelect saat produk diklik.
+ *     Menampilkan emoji, nama, dan kategori untuk setiap produk.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -14,6 +26,7 @@ export default function ProductPickerModal({ onSelect, onClose }: ProductPickerM
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
+  // EN: Fetch active products on mount / ID: Ambil produk aktif saat mount
   useEffect(() => {
     fetch('/api/products?active=true')
       .then((res) => res.json())
@@ -23,10 +36,12 @@ export default function ProductPickerModal({ onSelect, onClose }: ProductPickerM
       .finally(() => setLoading(false));
   }, []);
 
+  // EN: Filter by search term / ID: Saring berdasarkan kata pencarian
   const filtered = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // EN: Emoji fallback map / ID: Peta fallback emoji
   const emojiMap: Record<string, string> = {
     'Banana': '🍌', 'Apple': '🍎', 'Cherry': '🍒', 'Kiwi': '🥝',
     'Grape': '🍇', 'Fig': '🫒', 'Honeydew': '🍈', 'Dates': '🫐',
@@ -45,6 +60,7 @@ export default function ProductPickerModal({ onSelect, onClose }: ProductPickerM
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content max-w-2xl" onClick={(e) => e.stopPropagation()}>
+        {/* EN: Modal header / ID: Kepala modal */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold">Add Product</h2>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
@@ -53,6 +69,7 @@ export default function ProductPickerModal({ onSelect, onClose }: ProductPickerM
         </div>
 
         <div className="p-4">
+          {/* EN: Search input / ID: Input pencarian */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -64,6 +81,7 @@ export default function ProductPickerModal({ onSelect, onClose }: ProductPickerM
             />
           </div>
 
+          {/* EN: Product grid (3 columns) / ID: Grid produk (3 kolom) */}
           {loading ? (
             <div className="text-center py-8 text-gray-500">Loading products...</div>
           ) : (

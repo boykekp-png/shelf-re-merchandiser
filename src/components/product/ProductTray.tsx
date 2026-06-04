@@ -1,3 +1,15 @@
+/**
+ * EN: ProductTray — A slide-out side panel listing all active products.
+ *     Fetches products from /api/products?active=true when opened.
+ *     Each product is draggable onto shelves via JSON dataTransfer.
+ *     Shows emoji fallbacks for products without images.
+ *
+ * ID: ProductTray — Panel samping geser yang mendaftar semua produk aktif.
+ *     Mengambil produk dari /api/products?active=true saat dibuka.
+ *     Setiap produk dapat diseret ke rak via JSON dataTransfer.
+ *     Menampilkan fallback emoji untuk produk tanpa gambar.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -13,6 +25,7 @@ export default function ProductTray({ open, onToggle }: ProductTrayProps) {
   const [products, setProducts] = useState<ProductWithCategory[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // EN: Fetch active products when tray opens / ID: Ambil produk aktif saat baki dibuka
   useEffect(() => {
     if (open) {
       setLoading(true);
@@ -25,6 +38,7 @@ export default function ProductTray({ open, onToggle }: ProductTrayProps) {
     }
   }, [open]);
 
+  // EN: Emoji fallback map / ID: Peta fallback emoji
   const emojiMap: Record<string, string> = {
     'Banana': '🍌', 'Apple': '🍎', 'Cherry': '🍒', 'Kiwi': '🥝',
     'Grape': '🍇', 'Fig': '🫒', 'Honeydew': '🍈', 'Dates': '🫐',
@@ -44,6 +58,7 @@ export default function ProductTray({ open, onToggle }: ProductTrayProps) {
 
   return (
     <div className="fixed right-0 top-16 bottom-0 w-80 bg-white border-l border-gray-200 shadow-lg z-40 flex flex-col">
+      {/* EN: Tray header / ID: Kepala baki */}
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Package className="w-5 h-5" /> Product Tray
@@ -53,6 +68,7 @@ export default function ProductTray({ open, onToggle }: ProductTrayProps) {
         </button>
       </div>
 
+      {/* EN: Product grid (2 columns) / ID: Grid produk (2 kolom) */}
       <div className="flex-1 overflow-y-auto p-4">
         {loading ? (
           <div className="text-center py-8 text-gray-500">Loading...</div>
@@ -65,6 +81,7 @@ export default function ProductTray({ open, onToggle }: ProductTrayProps) {
                   key={product.id}
                   draggable
                   onDragStart={(e) => {
+                    // EN: Send product info as JSON for the drop handler / ID: Kirim info produk sebagai JSON untuk handler drop
                     e.dataTransfer.setData(
                       'application/json',
                       JSON.stringify({

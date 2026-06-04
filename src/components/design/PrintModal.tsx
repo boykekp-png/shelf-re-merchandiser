@@ -1,3 +1,15 @@
+/**
+ * EN: PrintModal — Print/PDF preview modal for a design.
+ *     Renders all shelves as a printer-friendly grid.
+ *     Supports browser print (window.print) and Save as PDF (jsPDF + html2canvas).
+ *     Dynamically imports heavy PDF libraries only when needed.
+ *
+ * ID: PrintModal — Modal pratinjau cetak/PDF untuk sebuah desain.
+ *     Merender semua rak sebagai grid yang ramah printer.
+ *     Mendukung cetak browser (window.print) dan Simpan sebagai PDF (jsPDF + html2canvas).
+ *     Import dinamis library PDF berat hanya saat dibutuhkan.
+ */
+
 'use client';
 
 import { useRef } from 'react';
@@ -27,10 +39,12 @@ interface PrintModalProps {
 export default function PrintModal({ design, onClose }: PrintModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
 
+  // EN: Native browser print / ID: Cetak native browser
   const handlePrint = () => {
     window.print();
   };
 
+  // EN: Generate PDF using jsPDF + html2canvas (dynamic import) / ID: Hasilkan PDF menggunakan jsPDF + html2canvas (import dinamis)
   const handleSavePdf = async () => {
     try {
       const { default: html2canvas } = await import('html2canvas');
@@ -61,6 +75,7 @@ export default function PrintModal({ design, onClose }: PrintModalProps) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content max-w-4xl" onClick={(e) => e.stopPropagation()}>
+        {/* EN: Toolbar (hidden in print) / ID: Toolbar (tersembunyi saat cetak) */}
         <div className="flex items-center justify-between p-4 border-b no-print">
           <h2 className="text-lg font-semibold">Print Preview</h2>
           <div className="flex items-center gap-2">
@@ -74,6 +89,7 @@ export default function PrintModal({ design, onClose }: PrintModalProps) {
           </div>
         </div>
 
+        {/* EN: Printable content / ID: Konten yang dapat dicetak */}
         <div className="p-6 overflow-auto max-h-[70vh]">
           <div ref={printRef} className="print-area">
             <div className="text-center mb-6">
@@ -84,6 +100,7 @@ export default function PrintModal({ design, onClose }: PrintModalProps) {
               </p>
             </div>
 
+            {/* EN: Render each shelf / ID: Render setiap rak */}
             <div className="flex flex-col gap-4">
               {design.shelves.map((shelf) => (
                 <div key={shelf.id} className="border-2 border-gray-300 rounded-lg overflow-hidden">
@@ -98,6 +115,7 @@ export default function PrintModal({ design, onClose }: PrintModalProps) {
                         positions[item.gridPosition] = item;
                         occupied[item.gridPosition] = true;
                       }
+                      // EN: Render 12 columns with items or empty slots / ID: Render 12 kolom dengan item atau slot kosong
                       return Array.from({ length: 12 }, (_, col) => {
                         const item = positions[col];
                         if (item) {
