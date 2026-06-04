@@ -42,8 +42,7 @@ model Product {
   id            String    @id @default(cuid())
   name          String
   imagePath     String?
-  defaultWidth  Int       @default(3) // 1, 2, or 3 grid cells
-  isActive      Boolean   @default(true) // soft-delete: enable/disable
+  isActive      Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
@@ -92,7 +91,6 @@ model DesignShelf {
 model DesignItem {
   id             String    @id @default(cuid())
   gridPosition   Int       // 0-11 (column index within the 12-grid)
-  occupiedWidth  Int       @default(3) // 1, 2, or 3
   quantity        Int       @default(1)
   createdAt       DateTime  @default(now())
 

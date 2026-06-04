@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const { name, categoryId, defaultWidth, imagePath } = await request.json();
     if (!name || !categoryId) return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     const product = await prisma.product.create({
-      data: { name, categoryId, defaultWidth: defaultWidth || 3, imagePath: imagePath || null },
+      data: { name, categoryId, imagePath: imagePath || null },
       include: { category: true },
     });
     return NextResponse.json({ success: true, data: product });

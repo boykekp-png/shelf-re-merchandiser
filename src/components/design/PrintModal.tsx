@@ -6,12 +6,12 @@ import type { DesignWithShelves } from '@/types';
 
 const emojiMap: Record<string, string> = {
   'Banana': '🍌', 'Apple': '🍎', 'Cherry': '🍒', 'Kiwi': '🥝',
-  'Grape': '🍇', 'Fig': '🫒', 'Honeydew': '🍈', 'Dates': '🫐',
-  'Lemon': '🍋', 'Mango': '🥭', 'Chicken Breast': '🍗',
+  'Grape': '', 'Fig': '🫒', 'Honeydew': '🍈', 'Dates': '🫐',
+  'Lemon': '🍋', 'Mango': '', 'Chicken Breast': '🍗',
   'Ground Beef': '🥩', 'Pork Chop': '🍖', 'Salmon Fillet': '🐟',
   'Turkey Breast': '🦃', 'Smoked Turkey Sliced': '🥪', 'Bacon': '🥓',
   'Salami': '🍖', 'Provolone Cheese': '🧀', 'Ham': '🍖',
-  'Milk Gallon': '🥛', 'Half Gallon Milk': '🥛', 'Sour Cream': '🫗',
+  'Milk Gallon': '', 'Half Gallon Milk': '🥛', 'Sour Cream': '🫗',
   'Yogurt': '🍦', 'Butter': '🧈', 'Heavy Cream': '🥛',
   'Sourdough Bread': '🍞', 'Croissant': '🥐', 'Bagel': '🥯',
   'Blueberry Muffin': '🧁', 'Baguette': '🥖', 'Canned Beans': '🥫',
@@ -96,9 +96,7 @@ export default function PrintModal({ design, onClose }: PrintModalProps) {
                       const positions: Record<number, any> = {};
                       for (const item of shelf.items) {
                         positions[item.gridPosition] = item;
-                        for (let i = item.gridPosition; i < item.gridPosition + item.occupiedWidth; i++) {
-                          if (i < 12) occupied[i] = true;
-                        }
+                        occupied[item.gridPosition] = true;
                       }
                       return Array.from({ length: 12 }, (_, col) => {
                         const item = positions[col];
@@ -108,7 +106,7 @@ export default function PrintModal({ design, onClose }: PrintModalProps) {
                             <div
                               key={item.id}
                               className="border border-gray-300 rounded-lg p-2 flex flex-col items-center"
-                              style={{ gridColumn: `${col + 1} / span ${item.occupiedWidth}` }}
+                              style={{ gridColumn: `${col + 1}` }}
                             >
                               <span className="text-2xl">{emoji}</span>
                               <span className="text-[10px] font-medium text-center">{item.product.name}</span>

@@ -49,53 +49,53 @@ async function main() {
   // ─── Create Products ───
   const productsData = [
     // Produce
-    { name: 'Banana', category: 'Produce', defaultWidth: 3, emoji: '🍌' },
-    { name: 'Apple', category: 'Produce', defaultWidth: 3, emoji: '🍎' },
-    { name: 'Cherry', category: 'Produce', defaultWidth: 3, emoji: '🍒' },
-    { name: 'Kiwi', category: 'Produce', defaultWidth: 2, emoji: '🥝' },
-    { name: 'Grape', category: 'Produce', defaultWidth: 2, emoji: '🍇' },
-    { name: 'Fig', category: 'Produce', defaultWidth: 1, emoji: '🫒' },
-    { name: 'Honeydew', category: 'Produce', defaultWidth: 3, emoji: '🍈' },
-    { name: 'Dates', category: 'Produce', defaultWidth: 2, emoji: '🫐' },
-    { name: 'Lemon', category: 'Produce', defaultWidth: 1, emoji: '🍋' },
-    { name: 'Mango', category: 'Produce', defaultWidth: 3, emoji: '🥭' },
+    { name: 'Banana', category: 'Produce', emoji: '🍌' },
+    { name: 'Apple', category: 'Produce', emoji: '🍎' },
+    { name: 'Cherry', category: 'Produce', emoji: '🍒' },
+    { name: 'Kiwi', category: 'Produce', emoji: '🥝' },
+    { name: 'Grape', category: 'Produce', emoji: '🍇' },
+    { name: 'Fig', category: 'Produce', emoji: '🫒' },
+    { name: 'Honeydew', category: 'Produce', emoji: '🍈' },
+    { name: 'Dates', category: 'Produce', emoji: '🫐' },
+    { name: 'Lemon', category: 'Produce', emoji: '🍋' },
+    { name: 'Mango', category: 'Produce', emoji: '🥭' },
 
     // Meat
-    { name: 'Chicken Breast', category: 'Meat', defaultWidth: 3, emoji: '🍗' },
-    { name: 'Ground Beef', category: 'Meat', defaultWidth: 3, emoji: '🥩' },
-    { name: 'Pork Chop', category: 'Meat', defaultWidth: 3, emoji: '🍖' },
-    { name: 'Salmon Fillet', category: 'Meat', defaultWidth: 2, emoji: '🐟' },
-    { name: 'Turkey Breast', category: 'Meat', defaultWidth: 3, emoji: '🦃' },
+    { name: 'Chicken Breast', category: 'Meat', emoji: '🍗' },
+    { name: 'Ground Beef', category: 'Meat', emoji: '🥩' },
+    { name: 'Pork Chop', category: 'Meat', emoji: '🍖' },
+    { name: 'Salmon Fillet', category: 'Meat', emoji: '🐟' },
+    { name: 'Turkey Breast', category: 'Meat', emoji: '🦃' },
 
     // Deli
-    { name: 'Smoked Turkey Sliced', category: 'Deli', defaultWidth: 3, emoji: '🥪' },
-    { name: 'Bacon', category: 'Deli', defaultWidth: 2, emoji: '🥓' },
-    { name: 'Salami', category: 'Deli', defaultWidth: 1, emoji: '🍖' },
-    { name: 'Provolone Cheese', category: 'Deli', defaultWidth: 2, emoji: '🧀' },
-    { name: 'Ham', category: 'Deli', defaultWidth: 3, emoji: '🍖' },
+    { name: 'Smoked Turkey Sliced', category: 'Deli', emoji: '🥪' },
+    { name: 'Bacon', category: 'Deli', emoji: '🥓' },
+    { name: 'Salami', category: 'Deli', emoji: '🍖' },
+    { name: 'Provolone Cheese', category: 'Deli', emoji: '🧀' },
+    { name: 'Ham', category: 'Deli', emoji: '🍖' },
 
     // Dairy
-    { name: 'Milk Gallon', category: 'Dairy', defaultWidth: 3, emoji: '🥛' },
-    { name: 'Half Gallon Milk', category: 'Dairy', defaultWidth: 2, emoji: '🥛' },
-    { name: 'Sour Cream', category: 'Dairy', defaultWidth: 2, emoji: '🫗' },
-    { name: 'Yogurt', category: 'Dairy', defaultWidth: 1, emoji: '🍦' },
-    { name: 'Butter', category: 'Dairy', defaultWidth: 1, emoji: '🧈' },
-    { name: 'Heavy Cream', category: 'Dairy', defaultWidth: 2, emoji: '🥛' },
+    { name: 'Milk Gallon', category: 'Dairy', emoji: '' },
+    { name: 'Half Gallon Milk', category: 'Dairy', emoji: '🥛' },
+    { name: 'Sour Cream', category: 'Dairy', emoji: '🫗' },
+    { name: 'Yogurt', category: 'Dairy', emoji: '🍦' },
+    { name: 'Butter', category: 'Dairy', emoji: '🧈' },
+    { name: 'Heavy Cream', category: 'Dairy', emoji: '🥛' },
 
     // Bakery
-    { name: 'Sourdough Bread', category: 'Bakery', defaultWidth: 3, emoji: '🍞' },
-    { name: 'Croissant', category: 'Bakery', defaultWidth: 2, emoji: '🥐' },
-    { name: 'Bagel', category: 'Bakery', defaultWidth: 1, emoji: '🥯' },
-    { name: 'Blueberry Muffin', category: 'Bakery', defaultWidth: 1, emoji: '🧁' },
-    { name: 'Baguette', category: 'Bakery', defaultWidth: 3, emoji: '🥖' },
+    { name: 'Sourdough Bread', category: 'Bakery', emoji: '🍞' },
+    { name: 'Croissant', category: 'Bakery', emoji: '🥐' },
+    { name: 'Bagel', category: 'Bakery', emoji: '🥯' },
+    { name: 'Blueberry Muffin', category: 'Bakery', emoji: '🧁' },
+    { name: 'Baguette', category: 'Bakery', emoji: '🥖' },
 
     // Grocery
-    { name: 'Canned Beans', category: 'Grocery', defaultWidth: 1, emoji: '🥫' },
-    { name: 'Pasta', category: 'Grocery', defaultWidth: 2, emoji: '🍝' },
-    { name: 'Rice', category: 'Grocery', defaultWidth: 2, emoji: '🍚' },
-    { name: 'Olive Oil', category: 'Grocery', defaultWidth: 1, emoji: '🫒' },
-    { name: 'Cereal', category: 'Grocery', defaultWidth: 3, emoji: '🥣' },
-    { name: 'Peanut Butter', category: 'Grocery', defaultWidth: 1, emoji: '🥜' },
+    { name: 'Canned Beans', category: 'Grocery', emoji: '🥫' },
+    { name: 'Pasta', category: 'Grocery', emoji: '🍝' },
+    { name: 'Rice', category: 'Grocery', emoji: '🍚' },
+    { name: 'Olive Oil', category: 'Grocery', emoji: '🫒' },
+    { name: 'Cereal', category: 'Grocery', emoji: '🥣' },
+    { name: 'Peanut Butter', category: 'Grocery', emoji: '🥜' },
   ];
 
   const products: Record<string, any> = {};
@@ -104,7 +104,6 @@ async function main() {
       data: {
         name: p.name,
         categoryId: categories[p.category].id,
-        defaultWidth: p.defaultWidth,
         isActive: true,
       },
     });
@@ -149,21 +148,18 @@ async function main() {
     for (const itemName of placement.items) {
       const product = products[itemName];
       if (!product) continue;
-      const width = product.defaultWidth;
 
-      // Skip if this would overflow the 12-grid (shouldn't happen with our data)
-      if (gridPos + width > 12) break;
+      if (gridPos >= 12) break;
 
       await prisma.designItem.create({
         data: {
           designShelfId: shelf.id,
           productId: product.id,
           gridPosition: gridPos,
-          occupiedWidth: width,
           quantity: 1,
         },
       });
-      gridPos += width;
+      gridPos += 1;
     }
   }
 

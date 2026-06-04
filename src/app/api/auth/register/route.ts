@@ -1,111 +1,76 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json();
-
     if (!name || !email || !password) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
-    if (password.length < 6) {
-      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
-    }
-
-    // Check if email already exists
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
+      return NextResponse.json({ error: 'Email already in use' }, { status: 409 });
     }
 
-    // Hash password
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // Create user
     const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        passwordHash,
-        role: 'user',
-      },
+      data: { name, email, passwordHash, role: 'user' },
     });
 
-    // Create default design for new user
-    // Get active products
-    const activeProducts = await prisma.product.findMany({
-      where: { isActive: true },
-      include: { category: true },
-      take: 20,
-    });
-
-    const defaultDesign = await prisma.savedDesign.create({
+    // Create a default design for the new user
+    const design = await prisma.savedDesign.create({
       data: {
-        name: 'My First Layout',
+        name: 'My First Design',
         description: 'Default starting layout',
         userId: user.id,
       },
     });
 
-    // Create 5 shelves
+    // Create demo shelves
     const shelfNames = ['Shelf 1', 'Shelf 2', 'Shelf 3', 'Shelf 4', 'Shelf 5'];
-    const shelves = [];
     for (let i = 0; i < shelfNames.length; i++) {
-      const shelf = await prisma.designShelf.create({
-        data: {
-          name: shelfNames[i],
-          position: i,
-          designId: defaultDesign.id,
-        },
+      await prisma.designShelf.create({
+        data: { name: shelfNames[i], position: i, designId: design.id },
       });
-      shelves.push(shelf);
     }
 
-    // Place some products on shelves (just a few for new users)
-    if (activeProducts.length > 0) {
-      const productsPerShelf = Math.min(4, Math.floor(activeProducts.length / 5));
-      let productIdx = 0;
+    // Seed some demo products on first shelf
+    const demoProducts = await prisma.product.findMany({
+      where: { isActive: true },
+      take: 4,
+      include: { category: true },
+    });
 
-      for (const shelf of shelves) {
-        let gridPos = 0;
-        for (let i = 0; i < productsPerShelf && productIdx < activeProducts.length; i++) {
-          const product = activeProducts[productIdx];
-          const width = product.defaultWidth;
+    const firstShelf = await prisma.designShelf.findFirst({
+      where: { designId: design.id },
+      orderBy: { position: 'asc' },
+    });
 
-          if (gridPos + width > 12) break;
-
-          await prisma.designItem.create({
-            data: {
-              designShelfId: shelf.id,
-              productId: product.id,
-              gridPosition: gridPos,
-              occupiedWidth: width,
-              quantity: 1,
-            },
-          });
-
-          gridPos += width;
-          productIdx++;
-        }
+    if (firstShelf && demoProducts.length > 0) {
+      for (let i = 0; i < demoProducts.length; i++) {
+        await prisma.designItem.create({
+          data: {
+            designShelfId: firstShelf.id,
+            productId: demoProducts[i].id,
+            gridPosition: i,
+            quantity: 1,
+          },
+        });
       }
     }
 
     // Set as active design
     await prisma.activeDesign.create({
-      data: {
-        userId: user.id,
-        designId: defaultDesign.id,
-      },
+      data: { userId: user.id, designId: design.id },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Account created successfully',
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: true, data: { userId: user.id } });
+  } catch (e) {
+    console.error('Register error:', e);
+    return NextResponse.json({ error: 'Registration failed' }, { status: 500 });
   }
 }

@@ -113,7 +113,7 @@ export default function ProductCard({
 
       {/* Width indicator */}
       <span className="text-[10px] text-gray-400 mt-1">
-        {item.occupiedWidth}-grid
+        1-grid
         {item.quantity > 1 && ` · ×${item.quantity}`}
       </span>
     </div>

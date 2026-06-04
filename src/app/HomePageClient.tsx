@@ -83,13 +83,13 @@ export default function HomePageClient() {
     } catch { toast.error('Failed to save'); return false; }
   }, [design]);
 
-  const addProductToShelf = useCallback(async (shelfId: string, productId: string, productWidth: number, gridPosition: number) => {
+  const addProductToShelf = useCallback(async (shelfId: string, productId: string, gridPosition: number) => {
     if (!design) return;
     const pos = Math.max(0, gridPosition);
     try {
       const res = await fetch('/api/designs/items', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shelfId, productId, gridPosition: pos, occupiedWidth: productWidth, quantity: 1 }),
+        body: JSON.stringify({ shelfId, productId, gridPosition: pos, quantity: 1 }),
       });
       if (!res.ok) throw new Error('Add failed');
       await fetchDesign(viewingUserId || undefined);
@@ -195,8 +195,7 @@ export default function HomePageClient() {
             if (clipboard && design) {
               const shelf = design.shelves[0]; // Default to first shelf if no specific target
               if (shelf) {
-                // Pass the default width and the target shelf ID
-                addProductToShelf(shelf.id, clipboard.productId, clipboard.designItem.occupiedWidth, clipboard.designItem.gridPosition); // Use original position as default for paste
+            addProductToShelf(shelf.id, clipboard.productId, clipboard.designItem.gridPosition);
                 setClipboard(null);
               }
             }
@@ -229,8 +228,8 @@ export default function HomePageClient() {
               await moveItem(itemId, shelfId, toPosition);
             }}
             // Updated to receive and pass toPosition
-            onDropNewProduct={async (productId: string, defaultWidth: number, shelfId: string, toPosition: number) => {
-              await addProductToShelf(shelfId, productId, defaultWidth, toPosition);
+            onDropNewProduct={async (productId: string, _defaultWidth: number, shelfId: string, toPosition: number) => {
+              await addProductToShelf(shelfId, productId, toPosition);
             }}
           />
         )}
@@ -243,7 +242,7 @@ export default function HomePageClient() {
       {showProductPicker && (
         <ProductPickerModal
           onSelect={(product: any) => {
-            if (design && design.shelves.length > 0) addProductToShelf(design.shelves[0].id, product.id, product.defaultWidth, 0); // Default to position 0 for new product picker
+            if (design && design.shelves.length > 0) addProductToShelf(design.shelves[0].id, product.id, 0);
             setShowProductPicker(false);
           }}
           onClose={() => setShowProductPicker(false)}

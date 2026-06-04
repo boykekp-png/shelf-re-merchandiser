@@ -16,7 +16,6 @@ export async function POST(request: Request) {
         designShelfId: shelfId,
         productId,
         gridPosition: gridPosition || 0,
-        occupiedWidth: occupiedWidth || 3,
         quantity: quantity || 1,
       },
       include: { product: { include: { category: true } } },
