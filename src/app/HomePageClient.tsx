@@ -83,62 +83,13 @@ export default function HomePageClient() {
     } catch { toast.error('Failed to save'); return false; }
   }, [design]);
 
-  // Modified to accept gridPosition and ensure product width is respected
   const addProductToShelf = useCallback(async (shelfId: string, productId: string, productWidth: number, gridPosition: number) => {
     if (!design) return;
-    const shelf = design.shelves.find((s: any) => s.id === shelfId);
-    if (!shelf) return;
-    const occupied = new Array(12).fill(false);
-    for (const item of shelf.items) {
-      for (let i = item.gridPosition; i < item.gridPosition + item.occupiedWidth; i++) {
-        if (i < 12) occupied[i] = true;
-      }
-    }
-
-    let finalGridPosition = -1;
-
-    // Check if the requested gridPosition is valid and has enough space
-    const isRequestedPositionValid = gridPosition >= 0 && gridPosition + productWidth <= 12;
-
-    if (isRequestedPositionValid) {
-      let slotsAreFree = true;
-      for (let i = gridPosition; i < gridPosition + productWidth; i++) {
-        if (occupied[i]) {
-          slotsAreFree = false;
-          break;
-        }
-      }
-      if (slotsAreFree) {
-        finalGridPosition = gridPosition;
-      }
-    }
-
-    // If the requested position is not valid or not free, find the first available slot starting from the requested position
-    if (finalGridPosition === -1) {
-      for (let i = gridPosition; i <= 12 - productWidth; i++) { // Start search from gridPosition
-        let canFit = true;
-        for (let j = i; j < i + productWidth; j++) {
-          if (occupied[j]) {
-            canFit = false;
-            break;
-          }
-        }
-        if (canFit) {
-          finalGridPosition = i;
-          break;
-        }
-      }
-    }
-
-    if (finalGridPosition === -1) {
-      toast.error('No space available on this shelf.');
-      return;
-    }
-
+    const pos = Math.max(0, gridPosition);
     try {
       const res = await fetch('/api/designs/items', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shelfId, productId, gridPosition: finalGridPosition, occupiedWidth: productWidth, quantity: 1 }),
+        body: JSON.stringify({ shelfId, productId, gridPosition: pos, occupiedWidth: productWidth, quantity: 1 }),
       });
       if (!res.ok) throw new Error('Add failed');
       await fetchDesign(viewingUserId || undefined);
@@ -156,106 +107,13 @@ export default function HomePageClient() {
     } catch { toast.error('Failed to remove product'); }
   }, [fetchDesign, viewingUserId, selectedItemId]);
 
-  // Modified moveItem to correctly handle occupied slots and sourceShelfId
   const moveItem = useCallback(async (itemId: string, toShelfId: string, toPosition: number) => {
     if (!design) return;
-
-    let itemToMove: DesignItemWithProduct | null = null;
-    let sourceShelfId: string | null = null;
-
-    // Find the item and its original shelf
-    for (const shelf of design.shelves) {
-      const item = shelf.items.find((i: any) => i.id === itemId);
-      if (item) {
-        itemToMove = item;
-        sourceShelfId = shelf.id; // Store source shelf ID
-        break;
-      }
-    }
-
-    if (!itemToMove) {
-      toast.error('Item not found.');
-      return;
-    }
-
-    const productWidth = itemToMove.occupiedWidth;
-
-    // Get occupied slots for the target shelf
-    const targetShelf = design.shelves.find((s: any) => s.id === toShelfId);
-    if (!targetShelf) {
-      toast.error('Target shelf not found.');
-      return;
-    }
-
-    const occupied = new Array(12).fill(false);
-
-    // Populate occupied slots from all shelves, excluding the item being moved if it's on the same shelf
-    for (const shelf of design.shelves) {
-        for (const item of shelf.items) {
-            // If this is the item being moved AND it's on the target shelf, skip it for now
-            if (item.id === itemId && shelf.id === toShelfId) {
-                continue;
-            }
-            // Otherwise, mark its slots as occupied
-            for (let i = item.gridPosition; i < item.gridPosition + item.occupiedWidth; i++) {
-                if (i < 12) occupied[i] = true;
-            }
-        }
-    }
-
-    let finalGridPosition = -1;
-
-    // Check if the requested toPosition is valid and has enough space
-    const isRequestedPositionValid = toPosition >= 0 && toPosition + productWidth <= 12;
-
-    if (isRequestedPositionValid) {
-      let slotsAreFree = true;
-      for (let i = toPosition; i < toPosition + productWidth; i++) {
-        if (occupied[i]) {
-          slotsAreFree = false;
-          break;
-        }
-      }
-      if (slotsAreFree) {
-        finalGridPosition = toPosition;
-      }
-    }
-
-    // If the requested position is not valid or not free, search left then right for closest available slot
-    if (finalGridPosition === -1) {
-      let found = false;
-      const maxOffset = Math.max(toPosition, 12 - productWidth - toPosition);
-      for (let offset = 0; offset <= maxOffset; offset++) {
-        // Try leftwards first (close the gap)
-        const leftPos = toPosition - offset;
-        if (leftPos >= 0) {
-          let canFit = true;
-          for (let j = leftPos; j < leftPos + productWidth; j++) {
-            if (occupied[j]) { canFit = false; break; }
-          }
-          if (canFit) { finalGridPosition = leftPos; found = true; break; }
-        }
-        // Then try rightwards
-        const rightPos = toPosition + offset;
-        if (rightPos <= 12 - productWidth && !found) {
-          let canFit = true;
-          for (let j = rightPos; j < rightPos + productWidth; j++) {
-            if (occupied[j]) { canFit = false; break; }
-          }
-          if (canFit) { finalGridPosition = rightPos; found = true; break; }
-        }
-      }
-    }
-
-    if (finalGridPosition === -1) {
-      toast.error('No space available on this shelf for the item.');
-      return;
-    }
-
+    const pos = Math.max(0, toPosition);
     try {
       const res = await fetch(`/api/designs/items/${itemId}/move`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shelfId: toShelfId, gridPosition: finalGridPosition }),
+        body: JSON.stringify({ shelfId: toShelfId, gridPosition: pos }),
       });
       if (!res.ok) throw new Error('Move failed');
       await fetchDesign(viewingUserId || undefined);

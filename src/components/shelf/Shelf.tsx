@@ -53,35 +53,9 @@ export default function Shelf({
 
     if (!gridRef.current) return;
 
-    let targetColumn = -1;
-
-    // Find the column by checking which grid child element the mouse is over,
-    // reading its actual gridColumnStart. This correctly accounts for CSS gaps.
-    const children = gridRef.current.children;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as HTMLElement;
-      const rect = child.getBoundingClientRect();
-      if (e.clientX >= rect.left && e.clientX <= rect.right) {
-        const style = getComputedStyle(child);
-        const gridCol = style.gridColumnStart;
-        if (gridCol && gridCol !== 'auto') {
-          const colNum = parseInt(gridCol, 10);
-          if (!isNaN(colNum) && colNum >= 1 && colNum <= 12) {
-            targetColumn = colNum - 1; // convert to 0-indexed
-            break;
-          }
-        }
-      }
-    }
-
-    // Fallback for gap areas or if no grid child matched: use pixel position division
-    if (targetColumn === -1) {
-      const gridRect = gridRef.current.getBoundingClientRect();
-      const dropX = e.clientX - gridRect.left;
-      const numColumns = 12;
-      const columnWidth = gridRect.width / numColumns;
-      targetColumn = Math.max(0, Math.min(Math.floor(dropX / columnWidth), numColumns - 1));
-    }
+    const gridRect = gridRef.current.getBoundingClientRect();
+    const dropX = e.clientX - gridRect.left;
+    const targetColumn = Math.max(0, Math.min(Math.floor((dropX / gridRect.width) * 12), 11));
 
     // Try JSON format (new products from tray)
     const jsonData = e.dataTransfer.getData('application/json');
