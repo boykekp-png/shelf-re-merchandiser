@@ -51,17 +51,35 @@ export default function Shelf({
     e.preventDefault();
     setIsDragOver(false);
 
-    if (!gridRef.current) return; // Ensure ref is available
+    if (!gridRef.current) return;
 
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const mouseX = e.clientX;
-    const dropX = mouseX - gridRect.left; // Mouse position relative to the grid
+    // Find the actual grid column under the mouse using element inspection,
+    // which correctly accounts for CSS gap between columns
+    let targetColumn = -1;
 
-    // Calculate the target column (0-indexed)
-    const numColumns = 12;
-    const columnWidth = gridRect.width / numColumns;
-    // Ensure targetColumn is an integer and within bounds
-    const targetColumn = Math.max(0, Math.min(Math.floor(dropX / columnWidth), numColumns - 1));
+    const elementsAtPoint = document.elementsFromPoint(e.clientX, e.clientY);
+    for (const el of elementsAtPoint) {
+      const style = getComputedStyle(el);
+      const gridCol = style.gridColumnStart;
+      if (gridCol && gridCol !== 'auto') {
+        const colNum = parseInt(gridCol, 10);
+        if (!isNaN(colNum) && colNum >= 1 && colNum <= 12) {
+          targetColumn = colNum - 1; // convert to 0-indexed
+          // If the element spans multiple columns (has a '/ span' in gridColumnStart),
+          // the column is the start column, which is correct
+          break;
+        }
+      }
+    }
+
+    // Fallback: use pixel position division
+    if (targetColumn === -1) {
+      const gridRect = gridRef.current.getBoundingClientRect();
+      const dropX = e.clientX - gridRect.left;
+      const numColumns = 12;
+      const columnWidth = gridRect.width / numColumns;
+      targetColumn = Math.max(0, Math.min(Math.floor(dropX / columnWidth), numColumns - 1));
+    }
 
     // Try JSON format (new products from tray)
     const jsonData = e.dataTransfer.getData('application/json');
@@ -69,7 +87,6 @@ export default function Shelf({
       try {
         const parsed = JSON.parse(jsonData);
         if (parsed.type === 'new-product' && parsed.productId) {
-          // Pass the calculated targetColumn
           onDropNewProduct(parsed.productId, parsed.defaultWidth || 3, shelf.id, targetColumn);
           return;
         }
@@ -79,7 +96,6 @@ export default function Shelf({
     // Fallback: plain text (existing item move)
     const itemId = e.dataTransfer.getData('text/plain');
     if (itemId) {
-      // Pass the calculated targetColumn
       onDropOnShelf(itemId, shelf.id, targetColumn);
     }
   };
