@@ -1,7 +1,16 @@
+/**
+ * EN: Product by ID — PUT (update)
+ *     Admin-only. Updates a product's name, category, active status, and image.
+ *
+ * ID: Produk berdasarkan ID — PUT (perbarui)
+ *     Khusus admin. Memperbarui nama, kategori, status aktif, dan gambar produk.
+ */
+
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+/** EN: PUT /api/products/:id — update a product / ID: PUT /api/products/:id — perbarui produk */
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== 'admin') {

@@ -1,7 +1,16 @@
+/**
+ * EN: User by ID — PUT (update role)
+ *     Admin-only. Updates a user's role between 'admin' and 'user'.
+ *
+ * ID: Pengguna berdasarkan ID — PUT (perbarui peran)
+ *     Khusus admin. Memperbarui peran pengguna antara 'admin' dan 'user'.
+ */
+
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+/** EN: PUT /api/users/:id — update user role / ID: PUT /api/users/:id — perbarui peran pengguna */
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== 'admin') {

@@ -1,8 +1,21 @@
+/**
+ * EN: File Upload API — POST
+ *     Admin-only. Accepts multipart/form-data with a file and productId.
+ *     Saves the image to public/images/products/{productId}.{ext}
+ *     and updates the product's imagePath field in the database.
+ *
+ * ID: API Upload File — POST
+ *     Khusus admin. Menerima multipart/form-data dengan file dan productId.
+ *     Menyimpan gambar ke public/images/products/{productId}.{ext}
+ *     dan memperbarui field imagePath produk di database.
+ */
+
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
+/** EN: POST /api/upload — upload product image / ID: POST /api/upload — upload gambar produk */
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== 'admin') {
@@ -18,13 +31,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing file or productId' }, { status: 400 });
     }
 
+    // EN: Convert file to buffer / ID: Konversi file ke buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save to public/images/products/
+    // EN: Ensure upload directory exists / ID: Pastikan direktori upload ada
     const uploadDir = path.join(process.cwd(), 'public', 'images', 'products');
     await mkdir(uploadDir, { recursive: true });
 
+    // EN: Save with {productId}.{extension} naming / ID: Simpan dengan nama {productId}.{ekstensi}
     const ext = file.name.split('.').pop() || 'jpg';
     const filename = `${productId}.${ext}`;
     const filepath = path.join(uploadDir, filename);
@@ -33,7 +48,8 @@ export async function POST(request: Request) {
 
     const imagePath = `/images/products/${filename}`;
 
-    // Update product image path
+    // EN: Dynamic import to avoid circular dependency with prisma singleton
+    // ID: Import dinamis untuk menghindari circular dependency dengan singleton prisma
     await (await import('@/lib/prisma')).default.product.update({
       where: { id: productId },
       data: { imagePath },

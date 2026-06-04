@@ -1,7 +1,18 @@
+/**
+ * EN: Categories API — GET (list all) + POST (admin create)
+ *     GET: Returns all categories with product counts, ordered by name.
+ *     POST: Admin-only — creates a new category with icon and color.
+ *
+ * ID: API Kategori — GET (daftar semua) + POST (admin buat)
+ *     GET: Mengembalikan semua kategori dengan jumlah produk, diurutkan berdasarkan nama.
+ *     POST: Khusus admin — membuat kategori baru dengan ikon dan warna.
+ */
+
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+/** EN: GET /api/categories — list all categories / ID: GET /api/categories — daftar semua kategori */
 export async function GET() {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -16,6 +27,7 @@ export async function GET() {
   }
 }
 
+/** EN: POST /api/categories — admin creates a category / ID: POST /api/categories — admin membuat kategori */
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== 'admin') {

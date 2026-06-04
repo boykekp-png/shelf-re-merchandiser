@@ -1,8 +1,18 @@
+/**
+ * EN: Designs API — GET (list) + POST (create)
+ *     GET: Lists saved designs. Admin sees all designs; regular users see only their own.
+ *     POST: Creates a new design for the current user.
+ *
+ * ID: API Desain — GET (daftar) + POST (buat)
+ *     GET: Mendaftar desain yang tersimpan. Admin melihat semua desain; pengguna biasa hanya melihat miliknya.
+ *     POST: Membuat desain baru untuk pengguna saat ini.
+ */
+
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
-// GET /api/designs - List designs
+/** EN: GET /api/designs — list designs (all for admin, own for users) / ID: GET /api/designs — daftar desain (semua untuk admin, milik sendiri untuk user) */
 export async function GET() {
   const session = await auth();
   if (!session?.user) {
@@ -14,7 +24,7 @@ export async function GET() {
 
   try {
     const designs = await prisma.savedDesign.findMany({
-      where: isAdmin ? {} : { userId },
+      where: isAdmin ? {} : { userId }, // EN: Admin sees all / ID: Admin melihat semua
       include: { _count: { select: { shelves: true } } },
       orderBy: { updatedAt: 'desc' },
     });
@@ -24,7 +34,7 @@ export async function GET() {
   }
 }
 
-// POST /api/designs - Create new design
+/** EN: POST /api/designs — create a new design / ID: POST /api/designs — buat desain baru */
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
