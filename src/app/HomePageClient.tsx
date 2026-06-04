@@ -1,3 +1,21 @@
+/**
+ * EN: HomePageClient — Main planogram editor component.
+ *     Orchestrates all shelf-planning functionality:
+ *       - Fetches/refreshes the active design from /api/designs/active
+ *       - Manages all UI state (selection, clipboard, modals)
+ *       - Handles product add/remove/move with overlap prevention
+ *       - Admin can view other users' designs via user dropdown
+ *       - Provides save/load/print actions via the Toolbar
+ *
+ * ID: HomePageClient — Komponen editor planogram utama.
+ *     Mengatur semua fungsionalitas perencanaan rak:
+ *       - Mengambil/menyegarkan desain aktif dari /api/designs/active
+ *       - Mengelola semua state UI (seleksi, clipboard, modal)
+ *       - Menangani tambah/hapus/pindah produk dengan pencegahan tumpang tindih
+ *       - Admin dapat melihat desain pengguna lain via dropdown pengguna
+ *       - Menyediakan aksi simpan/muat/cetak melalui Toolbar
+ */
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';

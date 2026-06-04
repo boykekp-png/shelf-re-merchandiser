@@ -1,3 +1,11 @@
+/**
+ * EN: Admin Dashboard — overview page showing counts for Products, Categories, Users, and Designs.
+ *     Fetches stats from all 4 API endpoints in parallel via Promise.all.
+ *
+ * ID: Dasbor Admin — halaman ringkasan yang menampilkan jumlah Produk, Kategori, Pengguna, dan Desain.
+ *     Mengambil statistik dari 4 endpoint API secara paralel via Promise.all.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -13,6 +21,7 @@ export default function AdminDashboard() {
 
   const loadStats = async () => {
     try {
+      // EN: Fetch all stats in parallel / ID: Ambil semua statistik secara paralel
       const [prodRes, catRes, userRes, designRes] = await Promise.all([
         fetch('/api/products'),
         fetch('/api/categories'),
@@ -33,6 +42,7 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
+  // EN: Stat cards config / ID: Konfigurasi kartu statistik
   const cards = [
     { label: 'Products', value: stats.products, icon: Package, color: 'blue' },
     { label: 'Categories', value: stats.categories, icon: Tags, color: 'green' },

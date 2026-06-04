@@ -1,3 +1,13 @@
+/**
+ * EN: Admin Layout — side navigation with desktop sidebar + mobile bottom nav.
+ *     Wraps all /admin/* pages. Nav items: Dashboard, Products, Categories, Users.
+ *     Highlights active page. Links back to main app.
+ *
+ * ID: Layout Admin — navigasi samping dengan sidebar desktop + nav bawah mobile.
+ *     Membungkus semua halaman /admin/*. Item nav: Dashboard, Produk, Kategori, Pengguna.
+ *     Menyorot halaman aktif. Tautan kembali ke aplikasi utama.
+ */
+
 'use client';
 
 import Link from 'next/link';
@@ -16,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
+      {/* EN: Desktop sidebar / ID: Sidebar desktop */}
       <aside className="w-64 bg-white border-r border-gray-200 p-4 hidden md:block">
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-4">
@@ -44,7 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
       </aside>
 
-      {/* Mobile nav */}
+      {/* EN: Mobile bottom nav / ID: Nav bawah mobile */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
         <div className="flex justify-around p-2">
           {navItems.map((item) => {
@@ -66,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
 
-      {/* Main content */}
+      {/* EN: Main content area / ID: Area konten utama */}
       <main className="flex-1 p-6 pb-20 md:pb-6 overflow-auto">
         {children}
       </main>

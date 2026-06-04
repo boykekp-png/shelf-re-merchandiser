@@ -1,3 +1,13 @@
+/**
+ * EN: Admin Categories Page — CRUD management for product categories.
+ *     Each category has a name, emoji icon, and hex color.
+ *     Shows product count per category. Delete cascade removes all products in the category.
+ *
+ * ID: Halaman Kategori Admin — manajemen CRUD untuk kategori produk.
+ *     Setiap kategori memiliki nama, ikon emoji, dan warna hex.
+ *     Menampilkan jumlah produk per kategori. Hapus cascade menghapus semua produk dalam kategori.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -27,7 +37,7 @@ export default function AdminCategoriesPage() {
     if (!form.name) return;
     try {
       const url = editing ? `/api/products/${editing.id}` : '/api/categories';
-      // Simple POST for categories (no PUT route for simplicity)
+      // EN: Use POST for create (simplified — no PUT route for categories) / ID: Gunakan POST untuk buat (disederhanakan — tidak ada rute PUT untuk kategori)
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -63,6 +73,7 @@ export default function AdminCategoriesPage() {
         </button>
       </div>
 
+      {/* EN: Category form modal / ID: Modal form kategori */}
       {showForm && (
         <div className="modal-overlay" onClick={() => setShowForm(false)}>
           <div className="modal-content p-6" onClick={e => e.stopPropagation()}>
@@ -92,11 +103,13 @@ export default function AdminCategoriesPage() {
         </div>
       )}
 
+      {/* EN: Category cards grid / ID: Grid kartu kategori */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {categories.map(cat => (
           <div key={cat.id} className="bg-white rounded-xl border p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
+                {/* EN: Category icon with background / ID: Ikon kategori dengan latar */}
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl" style={{ backgroundColor: `${cat.color}20` }}>{cat.icon}</div>
                 <div>
                   <p className="font-semibold text-sm">{cat.name}</p>
@@ -108,6 +121,7 @@ export default function AdminCategoriesPage() {
                 <button onClick={() => handleDelete(cat.id)} className="p-1.5 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4 text-red-500" /></button>
               </div>
             </div>
+            {/* EN: Color bar preview / ID: Pratinjau batang warna */}
             <div className="w-full h-2 rounded-full" style={{ backgroundColor: cat.color }} />
           </div>
         ))}

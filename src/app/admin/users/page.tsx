@@ -1,3 +1,15 @@
+/**
+ * EN: Admin Users Page — User management with role toggling.
+ *     Lists all users with name, email, role badge, and join date.
+ *     Admin can toggle between 'admin' and 'user' roles.
+ *     Seed admin (admin@example.com) role cannot be changed.
+ *
+ * ID: Halaman Pengguna Admin — Manajemen pengguna dengan pengalihan peran.
+ *     Mendaftar semua pengguna dengan nama, email, lencana peran, dan tanggal bergabung.
+ *     Admin dapat mengalihkan antara peran 'admin' dan 'user'.
+ *     Peran admin seed (admin@example.com) tidak dapat diubah.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -20,6 +32,7 @@ export default function AdminUsersPage() {
   };
 
   const handleRoleToggle = async (user: any) => {
+    // EN: Protect seed admin from role changes / ID: Lindungi admin seed dari perubahan peran
     if (user.email === 'admin@example.com') { toast.error('Cannot change seed admin role'); return; }
     if (!confirm(`Change ${user.name}'s role to ${user.role === 'admin' ? 'user' : 'admin'}?`)) return;
     try {
@@ -53,6 +66,7 @@ export default function AdminUsersPage() {
               <tr key={user.id}>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
+                    {/* EN: Admin icon vs regular user icon / ID: Ikon admin vs pengguna biasa */}
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                       {user.role === 'admin' ? <Shield className="w-4 h-4 text-blue-600" /> : <User className="w-4 h-4 text-gray-600" />}
                     </div>
@@ -61,6 +75,7 @@ export default function AdminUsersPage() {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500">{user.email}</td>
                 <td className="px-4 py-3">
+                  {/* EN: Role badge with color coding / ID: Lencana peran dengan kode warna */}
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>
                     {user.role}
                   </span>

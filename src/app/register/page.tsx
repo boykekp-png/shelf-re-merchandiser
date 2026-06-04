@@ -1,3 +1,17 @@
+/**
+ * EN: Register Page (/register)
+ *     Client component for new user registration.
+ *     Validates password match + minimum length (6 chars).
+ *     Calls POST /api/auth/register to create account + default design.
+ *     Redirects to /login?registered=true on success.
+ *
+ * ID: Halaman Registrasi (/register)
+ *     Komponen client untuk pendaftaran pengguna baru.
+ *     Memvalidasi kecocokan password + panjang minimum (6 karakter).
+ *     Memanggil POST /api/auth/register untuk membuat akun + desain default.
+ *     Arahkan ke /login?registered=true jika berhasil.
+ */
+
 'use client';
 
 import { useState } from 'react';
@@ -18,6 +32,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
+    // EN: Client-side validation / ID: Validasi sisi klien
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -31,6 +46,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
+      // EN: Register via API, which creates user + default design / ID: Registrasi via API, yang membuat pengguna + desain default
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,6 +70,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md">
+        {/* EN: Back to login / ID: Kembali ke login */}
         <Link
           href="/login"
           className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -62,6 +79,7 @@ export default function RegisterPage() {
           Back to login
         </Link>
 
+        {/* EN: Branding / ID: Branding */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
             <Package className="w-8 h-8 text-white" />
@@ -70,6 +88,7 @@ export default function RegisterPage() {
           <p className="text-gray-500 mt-2">Start designing your shelf layouts</p>
         </div>
 
+        {/* EN: Registration form / ID: Form registrasi */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
@@ -148,6 +167,7 @@ export default function RegisterPage() {
             </button>
           </form>
 
+          {/* EN: Login link / ID: Tautan login */}
           <p className="mt-6 text-center text-sm text-gray-500">
             Already have an account?{' '}
             <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
