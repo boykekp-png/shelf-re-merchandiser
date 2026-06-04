@@ -1,3 +1,10 @@
+/// ─────────────────────────────────────────────
+/// EN: Shelf Re-Merchandiser — Database Schema
+///     SQLite via Prisma ORM with 6 models.
+/// ID: Skema Database Shelf Re-Merchandiser
+///     SQLite via Prisma ORM dengan 6 model.
+/// ─────────────────────────────────────────────
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,110 +14,135 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─── Users & Authentication ──
+// ─── Users & Authentication ─────────────────────
+// EN: Application users with role-based access (admin | user).
+// ID: Pengguna aplikasi dengan akses berbasis peran (admin | user).
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
-  passwordHash  String
-  name          String
-  role          String    @default("user") // "admin" | "user"
+  email         String    @unique         // EN: Login identifier / ID: Identitas login
+  passwordHash  String                     // EN: bcrypt-hashed password / ID: Password di-hash bcrypt
+  name          String                     // EN: Display name / ID: Nama tampilan
+  role          String    @default("user") // EN: "admin" or "user" / ID: "admin" atau "user"
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  designs       SavedDesign[]
-  activeDesign  ActiveDesign?
+  designs       SavedDesign[]              // EN: Designs owned / ID: Desain yang dimiliki
+  activeDesign  ActiveDesign?              // EN: Currently active design / ID: Desain yang sedang aktif
 
   @@map("users")
 }
 
-// ─── Categories ───
+// ─── Categories ────────────────────────────────
+// EN: Product categories with color-coding and emoji icons.
+// ID: Kategori produk dengan kode warna dan ikon emoji.
 model Category {
   id        String    @id @default(cuid())
-  name      String    @unique
-  icon      String    @default("📦")
-  color     String    @default("#9E9E9E")
+  name      String    @unique           // EN: e.g. "Produce", "Dairy" / ID: misal "Produce", "Dairy"
+  icon      String    @default("📦")     // EN: Emoji icon / ID: Ikon emoji
+  color     String    @default("#9E9E9E") // EN: Hex color for UI / ID: Warna hex untuk UI
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  products  Product[]
+  products  Product[]                    // EN: Products in this category / ID: Produk dalam kategori ini
 
   @@map("categories")
 }
 
-// ─── Products (Catalog) ───
+// ─── Products (Catalog) ─────────────────────────
+// EN: Individual products available for shelf placement.
+//     All products occupy exactly 1 grid slot.
+// ID: Produk individual yang tersedia untuk ditempatkan di rak.
+//     Semua produk menempati tepat 1 slot grid.
 model Product {
   id            String    @id @default(cuid())
-  name          String
-  imagePath     String?
-  isActive      Boolean   @default(true)
+  name          String                     // EN: Product name / ID: Nama produk
+  imagePath     String?                    // EN: Optional uploaded image / ID: Gambar upload opsional
+  isActive      Boolean   @default(true)   // EN: Available for use? / ID: Tersedia untuk digunakan?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   categoryId    String
   category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+                                         // EN: Belongs to a category / ID: Dimiliki oleh satu kategori
 
-  designItems   DesignItem[]
+  designItems   DesignItem[]             // EN: Shelf placements / ID: Penempatan di rak
 
   @@map("products")
 }
 
-// ─── Saved Designs ──
+// ─── Saved Designs ──────────────────────────────
+// EN: A complete planogram layout owned by a user.
+// ID: Layout planogram lengkap yang dimiliki oleh pengguna.
 model SavedDesign {
   id          String    @id @default(cuid())
-  name        String
-  description String?
-  isTemplate  Boolean   @default(false)
+  name        String                     // EN: Design name / ID: Nama desain
+  description String?                    // EN: Optional notes / ID: Catatan opsional
+  isTemplate  Boolean   @default(false)  // EN: Template flag (unused) / ID: Penanda template (tidak digunakan)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+                                         // EN: Owner / ID: Pemilik
 
-  shelves     DesignShelf[]
-  activeFor   ActiveDesign?
+  shelves     DesignShelf[]              // EN: Shelves in this design / ID: Rak dalam desain ini
+  activeFor   ActiveDesign?              // EN: Who has this as active / ID: Siapa yang mengaktifkan ini
 
   @@map("saved_designs")
 }
 
-// ─── Design Shelves ───
+// ─── Design Shelves ─────────────────────────────
+// EN: A horizontal shelf row within a design.
+//     Contains 12 grid columns (positions 0-11).
+// ID: Baris rak horizontal dalam sebuah desain.
+//     Berisi 12 kolom grid (posisi 0-11).
 model DesignShelf {
   id        String    @id @default(cuid())
-  name      String
-  position  Int       @default(0) // ordering index
+  name      String                     // EN: Shelf label / ID: Label rak
+  position  Int       @default(0)      // EN: Ordering index (0 = top) / ID: Indeks urutan (0 = atas)
   createdAt  DateTime  @default(now())
 
   designId  String
   design    SavedDesign  @relation(fields: [designId], references: [id], onDelete: Cascade)
+                                       // EN: Parent design / ID: Desain induk
 
-  items     DesignItem[]
+  items     DesignItem[]               // EN: Products on this shelf / ID: Produk di rak ini
 
   @@map("design_shelves")
 }
 
 // ─── Design Items (Products placed on shelves) ──
+// EN: A single product placed at a specific position on a shelf.
+// ID: Satu produk yang ditempatkan di posisi tertentu pada rak.
 model DesignItem {
   id             String    @id @default(cuid())
-  gridPosition   Int       // 0-11 (column index within the 12-grid)
-  quantity        Int       @default(1)
+  gridPosition   Int       // EN: Column 0-11 within the 12-grid shelf / ID: Kolom 0-11 dalam rak 12-grid
+  quantity        Int       @default(1)   // EN: Units at this position / ID: Jumlah di posisi ini
   createdAt       DateTime  @default(now())
 
   designShelfId  String
   designShelf    DesignShelf  @relation(fields: [designShelfId], references: [id], onDelete: Cascade)
+                                         // EN: Parent shelf / ID: Rak induk
 
   productId      String
   product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+                                         // EN: Which product / ID: Produk yang mana
 
   @@map("design_items")
 }
 
-// ─── Active Design Tracker ───
+// ─── Active Design Tracker ──────────────────────
+// EN: Tracks which design each user currently has open.
+//     One-to-one: each user has at most one active design.
+// ID: Melacak desain mana yang sedang dibuka setiap pengguna.
+//     Satu-ke-satu: setiap pengguna maksimal satu desain aktif.
 model ActiveDesign {
   id        String  @id @default(cuid())
 
-  userId    String  @unique
+  userId    String  @unique               // EN: One active per user / ID: Satu aktif per pengguna
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  designId  String  @unique
+  designId  String  @unique               // EN: One active per design / ID: Satu aktif per desain
   design    SavedDesign  @relation(fields: [designId], references: [id], onDelete: Cascade)
 
   @@map("active_designs")
