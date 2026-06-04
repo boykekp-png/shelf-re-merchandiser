@@ -21,7 +21,7 @@ A visual retail planogram tool for planning and organizing shelf layouts. Drag a
 |-------------|--------------------------------------------------|
 | Framework   | [Next.js 14](https://nextjs.org/) (App Router)   |
 | Language    | TypeScript                                       |
-| Database    | SQLite via [Prisma ORM](https://www.prisma.io/) |
+| Database    | PostgreSQL via [Prisma ORM](https://www.prisma.io/) |
 | Auth        | [NextAuth.js v5](https://authjs.dev/) (beta)    |
 | Styling     | [Tailwind CSS](https://tailwindcss.com/)         |
 | Icons       | [Lucide React](https://lucide.dev/)              |
@@ -133,7 +133,7 @@ src/
 |--------------|--------------------------------------------------|
 | Framework    | [Next.js 14](https://nextjs.org/) (App Router)   |
 | Bahasa       | TypeScript                                       |
-| Database     | SQLite via [Prisma ORM](https://www.prisma.io/) |
+| Database     | PostgreSQL via [Prisma ORM](https://www.prisma.io/) |
 | Autentikasi  | [NextAuth.js v5](https://authjs.dev/) (beta)    |
 | Styling      | [Tailwind CSS](https://tailwindcss.com/)         |
 | Ikon         | [Lucide React](https://lucide.dev/)              |
