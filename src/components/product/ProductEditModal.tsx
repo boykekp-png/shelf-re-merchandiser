@@ -32,10 +32,6 @@ export default function ProductEditModal({ item, onSave, onClose }: ProductEditM
             <p className="font-medium">{item.product.category.icon} {item.product.category.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500 mb-1">Grid Width</p>
-            <p className="font-medium">1 grid cell</p>
-          </div>
-          <div>
             <label className="text-sm text-gray-500 mb-1 block">Quantity</label>
             <input
               type="number"

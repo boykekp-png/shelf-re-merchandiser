@@ -111,11 +111,9 @@ export default function ProductCard({
         {category.icon} {category.name}
       </span>
 
-      {/* Width indicator */}
-      <span className="text-[10px] text-gray-400 mt-1">
-        1-grid
-        {item.quantity > 1 && ` · ×${item.quantity}`}
-      </span>
+      {item.quantity > 1 && (
+        <span className="text-[10px] text-gray-400 mt-1">×{item.quantity}</span>
+      )}
     </div>
   );
 }
