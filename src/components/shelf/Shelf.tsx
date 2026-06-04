@@ -53,26 +53,28 @@ export default function Shelf({
 
     if (!gridRef.current) return;
 
-    // Find the actual grid column under the mouse using element inspection,
-    // which correctly accounts for CSS gap between columns
     let targetColumn = -1;
 
-    const elementsAtPoint = document.elementsFromPoint(e.clientX, e.clientY);
-    for (const el of elementsAtPoint) {
-      const style = getComputedStyle(el);
-      const gridCol = style.gridColumnStart;
-      if (gridCol && gridCol !== 'auto') {
-        const colNum = parseInt(gridCol, 10);
-        if (!isNaN(colNum) && colNum >= 1 && colNum <= 12) {
-          targetColumn = colNum - 1; // convert to 0-indexed
-          // If the element spans multiple columns (has a '/ span' in gridColumnStart),
-          // the column is the start column, which is correct
-          break;
+    // Find the column by checking which grid child element the mouse is over,
+    // reading its actual gridColumnStart. This correctly accounts for CSS gaps.
+    const children = gridRef.current.children;
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i] as HTMLElement;
+      const rect = child.getBoundingClientRect();
+      if (e.clientX >= rect.left && e.clientX <= rect.right) {
+        const style = getComputedStyle(child);
+        const gridCol = style.gridColumnStart;
+        if (gridCol && gridCol !== 'auto') {
+          const colNum = parseInt(gridCol, 10);
+          if (!isNaN(colNum) && colNum >= 1 && colNum <= 12) {
+            targetColumn = colNum - 1; // convert to 0-indexed
+            break;
+          }
         }
       }
     }
 
-    // Fallback: use pixel position division
+    // Fallback for gap areas or if no grid child matched: use pixel position division
     if (targetColumn === -1) {
       const gridRect = gridRef.current.getBoundingClientRect();
       const dropX = e.clientX - gridRect.left;
