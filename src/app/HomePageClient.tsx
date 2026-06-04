@@ -63,7 +63,7 @@ export default function HomePageClient() {
   const [clipboard, setClipboard] = useState<ClipboardItem | null>(null);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [showProductPicker, setShowProductPicker] = useState(false);
-  const [showProductTray, setShowProductTray] = useState(false);
+  const [showProductTray, setShowProductTray] = useState(true);
   const [editingItem, setEditingItem] = useState<DesignItemWithProduct | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showLoadModal, setShowLoadModal] = useState(false);
@@ -227,12 +227,14 @@ export default function HomePageClient() {
         <Toolbar
           clipboard={clipboard} selectedItemId={selectedItemId} isAdmin={isAdmin}
           designName={design?.name || 'Untitled'}
+          showProductTray={showProductTray}
+          onToggleProductTray={() => setShowProductTray(!showProductTray)}
           onSave={() => design && saveDesign(design.id)}
           onSaveAs={() => setShowSaveModal(true)}
           onLoad={() => setShowLoadModal(true)}
           onPrint={() => setShowPrintModal(true)}
           onAddShelf={addShelf}
-          onAddProduct={() => setShowProductTray(true)}
+          onAddProduct={() => setShowProductPicker(true)}
           onCut={() => {
             if (selectedItemId && design) {
               for (const shelf of design.shelves) {

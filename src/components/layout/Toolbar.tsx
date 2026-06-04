@@ -10,7 +10,7 @@
 
 'use client';
 
-import { Save, FolderOpen, FilePlus, Printer, Scissors, Clipboard, Plus, Package, Users } from 'lucide-react';
+import { Save, FolderOpen, FilePlus, Printer, Scissors, Clipboard, Plus, Package, Users, PanelRightOpen, PanelRightClose } from 'lucide-react';
 import type { ClipboardItem } from '@/types';
 
 interface ToolbarProps {
@@ -18,6 +18,7 @@ interface ToolbarProps {
   selectedItemId: string | null;
   isAdmin: boolean;
   designName: string;
+  showProductTray: boolean;
   onSave: () => void;
   onSaveAs: () => void;
   onLoad: () => void;
@@ -26,6 +27,7 @@ interface ToolbarProps {
   onAddProduct: () => void;
   onCut: () => void;
   onPaste: () => void;
+  onToggleProductTray: () => void;
   viewingUserId: string | null;
   users: Array<{ id: string; name: string; email: string }>;
   onViewUser: (userId: string) => void;
@@ -33,9 +35,9 @@ interface ToolbarProps {
 }
 
 export default function Toolbar({
-  clipboard, selectedItemId, isAdmin, designName,
+  clipboard, selectedItemId, isAdmin, designName, showProductTray,
   onSave, onSaveAs, onLoad, onPrint, onAddShelf, onAddProduct,
-  onCut, onPaste, viewingUserId, users, onViewUser, onViewOwnDesigns,
+  onCut, onPaste, onToggleProductTray, viewingUserId, users, onViewUser, onViewOwnDesigns,
 }: ToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-2 mb-6 no-print">
@@ -88,6 +90,12 @@ export default function Toolbar({
       <button onClick={onPrint} className="toolbar-btn" title="Print / PDF">
         <Printer className="w-4 h-4" />
         <span className="hidden sm:inline">Print</span>
+      </button>
+
+      {/* ─── Product Browser Toggle / Toggle Browser Produk ─── */}
+      <button onClick={onToggleProductTray} className="toolbar-btn" title={showProductTray ? 'Hide Product Browser' : 'Show Product Browser'}>
+        {showProductTray ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
+        <span className="hidden sm:inline">{showProductTray ? 'Hide Tray' : 'Browse'}</span>
       </button>
 
       {/* ─── Admin: View as user dropdown / Admin: Dropdown lihat sebagai pengguna ─── */}
