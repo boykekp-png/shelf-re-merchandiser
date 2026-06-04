@@ -18,6 +18,7 @@ import prisma from '@/lib/prisma';
 // EN: Exported handlers for API routes, auth() for server components, signIn for client.
 // ID: Handler yang diekspor untuk rute API, auth() untuk komponen server, signIn untuk client.
 export const { handlers, auth, signIn } = NextAuth({
+  trustHost: true,
   providers: [
     // EN: Email/password credential provider using bcrypt comparison.
     // ID: Provider kredensial email/password menggunakan perbandingan bcrypt.
